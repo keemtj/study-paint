@@ -1,6 +1,7 @@
 // code
 // 경로그리기: https://developer.mozilla.org/ko/docs/Web/HTML/Canvas/Tutorial/Drawing_shapes
 // path method: https://developer.mozilla.org/ko/docs/Web/API/CanvasRenderingContext2D
+// sava: https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/toDataURL
 /**
  * canvas는 context를 갖는 HTML 태그이다
  * canvas는 2개의 사이즈를 갖는다
@@ -23,20 +24,24 @@ const colors = document.getElementsByClassName("jsColor"); // HTMLCollection
 // const colors = document.querySelectorAll(".jsColor"); // NodeList
 const range = document.getElementById("jsRange");
 const mode = document.getElementById("jsMode");
+const save = document.getElementById("jsSave");
 
 // default value
 // 코드나 변수 등이 반복된다는 것을 알았을 때 Default변수를 선언해준다.
-const INITIAL_COLOR = "#2c2c2c";
+const INITIAL_STROKE_COLOR = "#2c2c2c";
+const INITIAL_FILL_COLOR = "white";
 const CANVAS_SIZE = 650;
 
 canvas.width = CANVAS_SIZE;
 canvas.height = CANVAS_SIZE;
 // stroke(paint)
-ctx.strokeStyle = INITIAL_COLOR;
+ctx.strokeStyle = INITIAL_STROKE_COLOR;
 ctx.lineWidth = 2.5;
 ctx.lineCap = "round";
 // fill(fill)
-ctx.fillStyle = INITIAL_COLOR;
+ctx.fillStyle = INITIAL_FILL_COLOR;
+ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+// ctx.fillStyle = INITIAL_COLOR;
 
 let painting = false;
 let filling = false;
@@ -91,12 +96,32 @@ function handleCanvasClick() {
   }
 }
 
+function handleContextMenu(e) {
+  if (e.target.matches("canvas")) e.preventDefault();
+}
+
+function handleSaveClick() {
+  // canvas 이미지를 data url로 변환
+  const image = canvas.toDataURL("image/png");
+  // 다운로드 기능을 위해 'a'태그 생성
+  const link = document.createElement("a");
+  // href에 data url주소 할당
+  link.href = image;
+  // filename 지정
+  // link.setAttribute("download", "handsome");
+  link.download = "fileName";
+  // element에 마우스클릭 시뮬레이션
+  // button 클릭시 <a href="" download></a>가 시뮬레이션 클릭이 되기 위함
+  link.click();
+}
+
 if (canvas) {
   canvas.addEventListener("mousemove", onMouseMove);
   canvas.addEventListener("mousedown", startPainting);
   canvas.addEventListener("mouseup", stopPainting);
   canvas.addEventListener("mouseleave", stopPainting);
   canvas.addEventListener("click", handleCanvasClick);
+  canvas.addEventListener("contextmenu", handleContextMenu);
 }
 
 [...colors].forEach((color) =>
@@ -114,4 +139,7 @@ if (range) {
 
 if (mode) {
   mode.addEventListener("click", handleModeClick);
+}
+if (save) {
+  save.addEventListener("click", handleSaveClick);
 }
