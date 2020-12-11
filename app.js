@@ -19,16 +19,27 @@
 
 const canvas = document.getElementById("jsCanvas");
 const ctx = canvas.getContext("2d");
-const colors = document.getElementsByClassName("jsColor");
-// const colors = document.querySelectorAll(".jsColor");
+const colors = document.getElementsByClassName("jsColor"); // HTMLCollection
+// const colors = document.querySelectorAll(".jsColor"); // NodeList
+const range = document.getElementById("jsRange");
+const mode = document.getElementById("jsMode");
 
-canvas.width = 650;
-canvas.height = 650;
-ctx.strokeStyle = "#2c2c2c";
-ctx.lineWidth = 5;
-// ctx.lineCap = "round";
+// default value
+// 코드나 변수 등이 반복된다는 것을 알았을 때 Default변수를 선언해준다.
+const INITIAL_COLOR = "#2c2c2c";
+const CANVAS_SIZE = 650;
+
+canvas.width = CANVAS_SIZE;
+canvas.height = CANVAS_SIZE;
+// stroke(paint)
+ctx.strokeStyle = INITIAL_COLOR;
+ctx.lineWidth = 2.5;
+ctx.lineCap = "round";
+// fill(fill)
+ctx.fillStyle = INITIAL_COLOR;
 
 let painting = false;
+let filling = false;
 
 function startPainting() {
   painting = true;
@@ -53,9 +64,31 @@ function onMouseMove(e) {
 }
 
 function handleColorClick(e) {
-  // const color = e.target.style.backgroundColor;
-  const { color } = e.target.dataset;
+  // const color = e.target.style.backgroundColor; // rgb()
+  const { color } = e.target.dataset; // data-color
   ctx.strokeStyle = color;
+  ctx.fillStyle = color;
+}
+
+function handleRangeChange(e) {
+  const lineWidth = e.target.value;
+  ctx.lineWidth = lineWidth;
+}
+
+function handleModeClick() {
+  if (!filling) {
+    filling = true;
+    mode.innerText = "paint";
+  } else {
+    filling = false;
+    mode.innerText = "fill";
+  }
+}
+
+function handleCanvasClick() {
+  if (filling) {
+    ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+  }
 }
 
 if (canvas) {
@@ -63,7 +96,22 @@ if (canvas) {
   canvas.addEventListener("mousedown", startPainting);
   canvas.addEventListener("mouseup", stopPainting);
   canvas.addEventListener("mouseleave", stopPainting);
+  canvas.addEventListener("click", handleCanvasClick);
 }
+
 [...colors].forEach((color) =>
   color.addEventListener("click", handleColorClick)
 );
+
+if (range) {
+  // input 이벤트는 change 이벤트와는 달리 value 속성이 바뀔 시마다 반드시 일어난다.
+  // 값을 선택하거나 옵션 선택하자마자 일어나지만, 특정 글자를 입력 시에는 입력이 끝나고 value 속성에 적용되어야 발생하는데,
+  // 예를 들면, 한글 입력의 경우 한글자가 완성된 뒤 다른 키를 입력(예: 엔터 키)이 일어나야 발생된다.
+  // 이 또한 브라우저마다 다르므로 호환성을 확인하여 대응해야 한다. (역자 주)
+  // range.addEventListener("change", handleRangeChange);
+  range.addEventListener("input", handleRangeChange);
+}
+
+if (mode) {
+  mode.addEventListener("click", handleModeClick);
+}
