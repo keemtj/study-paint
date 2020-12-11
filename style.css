@@ -6,7 +6,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 50px;
+  padding: 50px 0px;
 }
 
 .canvas {
@@ -18,7 +18,7 @@ body {
 }
 
 .controls {
-  margin-top: 80px;
+  margin-top: 40px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -59,4 +59,8 @@ body {
   /* width의 절반값, 25px */
   cursor: pointer;
   box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.controls .controls__range {
+  margin-bottom: 20px;
 }
