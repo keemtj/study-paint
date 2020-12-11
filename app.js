@@ -19,6 +19,8 @@
 
 const canvas = document.getElementById("jsCanvas");
 const ctx = canvas.getContext("2d");
+const colors = document.getElementsByClassName("jsColor");
+// const colors = document.querySelectorAll(".jsColor");
 
 canvas.width = 650;
 canvas.height = 650;
@@ -36,22 +38,24 @@ function stopPainting() {
   painting = false;
 }
 
-function onMouseDown(e) {
-  painting = true;
-}
-
 // making lines
 function onMouseMove(e) {
   const { offsetX: x, offsetY: y } = e;
   if (!painting) {
-    console.log("creating path in", x, y);
+    // console.log("creating path in", x, y);
     ctx.beginPath(); // 새로운 경로를 만들어줌
     ctx.moveTo(x, y); // 펜을 x, y로 지정된 좌표로 옮김
   } else {
-    console.log("creating line in", x, y);
+    // console.log("creating line in", x, y);
     ctx.lineTo(x, y); // 이전의 점과 연결
     ctx.stroke();
   }
+}
+
+function handleColorClick(e) {
+  // const color = e.target.style.backgroundColor;
+  const { color } = e.target.dataset;
+  ctx.strokeStyle = color;
 }
 
 if (canvas) {
@@ -60,3 +64,6 @@ if (canvas) {
   canvas.addEventListener("mouseup", stopPainting);
   canvas.addEventListener("mouseleave", stopPainting);
 }
+[...colors].forEach((color) =>
+  color.addEventListener("click", handleColorClick)
+);
